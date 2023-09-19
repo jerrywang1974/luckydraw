@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>禮品抽籤程式</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .form-wrapper {
+            background-color: #f2f2f2;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        form {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: block;
+            margin-bottom: 10px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .file-name {
+            margin-bottom: 10px;
+        }
+
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+
+        .option-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .option-label {
+            margin-right: 10px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: #4CAF50;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #4CAF50;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(20px);
+            -ms-transform: translateX(20px);
+            transform: translateX(20px);
+        }
+
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-wrapper">
+            <h1>禮品抽籤程式</h1>
+            <form action="{{ url_for('randomize') }}" method="POST" enctype="multipart/form-data">
+                <label class="file-label1">
+                    選擇 [員工名單] Excel 文件：
+                    <input type="file" name="csv_file1" class="file-input1" required>
+                </label>
+                <hr>
+                <!---
+                <span class="file-name1">未選擇文件</span>
+                --->
+                <label class="file-label2">
+                    選擇 [禮品清單] Excel 文件：
+                    <input type="file" name="csv_file2" class="file-input2" required>
+                </label>
+                <hr>
+                <!---
+                <span class="file-name2">未選擇文件</span>
+
+                <label class="option-wrapper">
+                    <span class="option-label">團隊數量：</span>
+                    <input type="number" name="num_teams" min="1" required>
+                </label>
+                <label class="option-wrapper">
+                    <span class="option-label">強制性別平衡(至少一名女性成員)：</span>
+                    <label class="switch">
+                        <input type="checkbox" name="force_female_balance">
+                        <span class="slider round"></span>
+                    </label>
+                </label>
+                --->
+                <button type="submit" class="submit-btn">開始抽獎</button>
+            </form>
+	    <a href="http://monitor.jerryw.org/sample-employee.xls"> [員工名單]範例檔下載</a>
+        <a href="http://monitor.jerryw.org/sample-giflist.xls"> [禮品清單]範例檔下載</a>
+        </div>
+    </div>
+</body>
+</html>

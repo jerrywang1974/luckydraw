@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>禮品抽籤結果</title>
+    <style>
+        body {
+            font-family: DFKai-sb, Arial, sans-serif;
+        }
+
+        .container {
+            margin: 20px;
+        }
+
+        .result-wrapper {
+            margin-top: 20px;
+        }
+        .team {
+            margin-bottom: 20px;
+        }
+
+        .team-title {
+            font-weight: bold;
+            font-size: 25px;
+        }
+
+        .member-list {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            font-size: 18px;
+        }
+
+        .member {
+            margin-bottom: 5px;
+        }
+
+        .download-links {
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="result-wrapper">
+            <h1>禮品抽籤結果</h1>
+            <span style="font-family:DFKai-sb;">
+              <!--- {% for numbers in teams %} --->
+                <div class="result">
+                    <!---    <ul class="member-list"> --->
+                        {% for member in teams %}
+                            <li class="member"> {{ member[0] }}  {{ member[1] }} {{ member[2] }}  {{ member[4] }} </li>
+                        {% endfor %}
+                       <!--- </ul> --->
+                </div>
+             <!--- {% endfor %}--->
+            </span>
+        </div>
+        <div class="download-links">
+            <a href="/download_csv?csv_file_path={{ csv_file_path }}">Download as CSV</a>
+            <!--- <a href="/download_pdf?pdf_file_path={{ pdf_file_path }}">Download as PDF</a> --->
+        </div>
+    </div>
+</body>
+</html>

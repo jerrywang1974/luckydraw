@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>随机分组</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .form-wrapper {
+            background-color: #f2f2f2;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            max-width: 500px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            text-align: center;
+            margin-top: 0;
+        }
+
+        form {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: block;
+            margin-bottom: 10px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .file-name {
+            margin-bottom: 10px;
+        }
+
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+
+        .option-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .option-label {
+            margin-right: 10px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: #4CAF50;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #4CAF50;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(20px);
+            -ms-transform: translateX(20px);
+            transform: translateX(20px);
+        }
+
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        .teams-wrapper class. Here's the updated CSS code:
+
+        css
+        
+        .teams-wrapper {
+            margin-top: 0px;
+            text-align: left;
+            overflow-y: auto;
+            max-height: 4000px;
+        }
+        
+        .team {
+            margin-bottom: 20px;
+            border: 1px solid #ccc;
+            padding: 10px;
+            border-radius: 5px;
+        }
+        
+        .team-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .member-list {
+            list-style-type: none;
+            padding-left: 20px;
+            margin: 0;
+        }
+        
+        .member {
+            margin-bottom: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-wrapper">
+            <h1>随机分组</h1>
+            <form action="{{ url_for('randomize') }}" method="POST" enctype="multipart/form-data">
+                <label class="file-label">
+                    选择 CSV 文件：
+                    <input type="file" name="csv_file" class="file-input" required>
+                </label>
+                <span class="file-name">未选择文件</span>
+                <label class="option-wrapper">
+                    <span class="option-label">团队数量：</span>
+                    <input type="number" name="num_teams" min="1" required>
+                </label>
+                <label class="option-wrapper">
+                    <span class="option-label">强制性别平衡：</span>
+                    <label class="switch">
+                        <input type="checkbox" name="force_female_balance">
+                        <span class="slider round"></span>
+                    </label>
+                </label>
+                <button type="submit" class="submit-btn">随机分组</button>
+            </form>
+            {% if teams %}
+                <div class="teams-wrapper">
+                    <h2>随机分组结果：</h2>
+                    {% for team in teams %}
+                        <div class="team">
+                            <p class="team-title">团队 {{ loop.index }}</p>
+                            <ul class="member-list">
+                                {% for member in team %}
+                                    <li class="member">{{ member["Name"] }} ({{ member["Gender"] }})</li>
+                                {% endfor %}
+                            </ul>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.querySelector('.file-input');
+        const fileName = document.querySelector('.file-name');
+
+        fileInput.addEventListener('change', function () {
+            fileName.textContent = this.files[0].name;
+        });
+    </script>
+</body>
+</html>

@@ -1,2 +1,1 @@
-# luckydraw
-lucky draw
+# draw-team-grouping

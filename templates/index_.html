@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Randomize Teams</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+        }
+
+        .container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+        }
+
+        .form-wrapper {
+            background-color: #f2f2f2;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+        }
+
+        form {
+            margin-top: 20px;
+            text-align: center;
+        }
+
+        .file-input {
+            display: none;
+        }
+
+        .file-label {
+            display: block;
+            margin-bottom: 10px;
+            text-align: left;
+            font-weight: bold;
+        }
+
+        .file-name {
+            margin-bottom: 10px;
+        }
+
+        .submit-btn {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+
+        .submit-btn:hover {
+            background-color: #45a049;
+        }
+
+        .option-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .option-label {
+            margin-right: 10px;
+        }
+
+        .switch {
+            position: relative;
+            display: inline-block;
+            width: 40px;
+            height: 20px;
+        }
+
+        .switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 2px;
+            bottom: 2px;
+            background-color: white;
+            -webkit-transition: .4s;
+            transition: .4s;
+        }
+
+        input:checked + .slider {
+            background-color: #4CAF50;
+        }
+
+        input:focus + .slider {
+            box-shadow: 0 0 1px #4CAF50;
+        }
+
+        input:checked + .slider:before {
+            -webkit-transform: translateX(20px);
+            -ms-transform: translateX(20px);
+            transform: translateX(20px);
+        }
+
+        .slider.round {
+            border-radius: 34px;
+        }
+
+        .slider.round:before {
+            border-radius: 50%;
+        }
+
+        .pdf-link {
+            display: block;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="form-wrapper">
+            <h1>Randomize Teams</h1>
+            <form action="{{ url_for('randomize') }}" method="POST" enctype="multipart/form-data">
+                <label class="file-label">
+                    Choose CSV file:
+                    <input type="file" name="csv_file" class="file-input" required>
+                </label>
+                <span class="file-name">No file selected</span>
+                <label class="option-wrapper">
+                    <span class="option-label">Number of Teams:</span>
+                    <input type="number" name="num_teams" min="1" required>
+                </label>
+                <label class="option-wrapper">
+                    <span class="option-label">Force Female Balance:</span>
+                    <label class="switch">
+                        <input type="checkbox" name="force_female_balance">
+                        <span class="slider round"></span>
+                    </label>
+                </label>
+                <button type="submit" class="submit-btn">Randomize Teams</button>
+            </form>
+            {% if teams %}
+                <h2>Randomized Teams:</h2>
+                <ul>
+                {% for team in teams %}
+                    <li>
+                        <strong>Team {{ loop.index }}:</strong>
+                        <ul>
+                        {% for member in team %}
+                            <li>{{ member["Name"] }} ({{ member["Gender"] }})</li>
+                        {% endfor %}
+                        </ul>
+                    </li>
+                {% endfor %}
+                </ul>
+                <a href="{{ url_for('static', filename='randomized_teams.pdf') }}" class="pdf-link">Download PDF</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <script>
+        const fileInput = document.querySelector('.file-input');
+        const fileName = document.querySelector('.file-name');
+
+        fileInput.addEventListener('change', function () {
+            fileName.textContent = this.files[0].name;
+        });
+    </script>
+</body>
+</html>
