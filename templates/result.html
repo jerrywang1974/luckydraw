@@ -1,5 +1,7 @@
 <!DOCTYPE html>
 <html>
+  <!-- Include required scripts here -->
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
 <head>
     <title>禮品抽籤結果</title>
     <style>
@@ -48,17 +50,31 @@
                 <div class="result">
 
                         {% for member in teams %}
-                            <li class="member"> {{ member[0] }}  {{ member[1] }} {{ member[2] }}  {{ member[4] }} </li>
+                            <li class="member"> {{ member[0] }}  {{ member[1] }} {{ member[2] }}  {{ member[5]}} </li>
                         {% endfor %}
 
                 </div>
 
             </span>
         </div>
-        <div class="download-links">
-            <a href="/download_csv?csv_file_path={{ csv_file_path }}">Download as CSV</a>
-            <!--- <a href="/download_pdf?pdf_file_path={{ pdf_file_path }}">Download as PDF</a> --->
-        </div>
     </div>
+    <p>
+     <!---
+    <button id="downloadBtn">Download CSV</button>
+
+    <script>
+        $(document).ready(function(){
+            // Event listener for the download button
+            $('#downloadBtn').click(function(e){
+                e.preventDefault(); // Stop the default action of the button
+                var csvFilePath = "draw_result.csv"
+                // Replace with your server-side download route
+                var downloadLink = "/download_csv/"+ csvFilePath;
+
+                window.location.href = downloadLink;
+            });
+        });
+    </script>
+--->
 </body>
 </html>

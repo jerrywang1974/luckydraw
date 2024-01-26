@@ -1,10 +1,13 @@
 import csv
+import os
 import random
-from flask import Flask, render_template, request, make_response, send_file
-from io import StringIO, BytesIO
-from fpdf import FPDF
-import numpy as np
 import tempfile
+import codecs
+from datetime import datetime
+from flask import Flask, render_template, request, make_response, send_file, Response,send_from_directory
+from fpdf import FPDF
+from io import StringIO, BytesIO
+import numpy as np
 import pandas as pd
 
 app = Flask(__name__, static_url_path='/static')
@@ -29,12 +32,12 @@ def randomize():
     reader_gift = pd.read_excel(xls_file2)
     
     for row1 in reader_employee.values.tolist():
-        if row1[3] is not np.nan:
+        if ((row1[3] is not (np.nan)) and (row1[4] is not (np.nan) ) or row1[3]==" " or row1[3]=="　"):
             pass
         else:
             employee_data.append(row1)
     for row2 in reader_gift.values.tolist():
-        if (row2[2] or row2[3]) is not np.nan:
+        if (row2[2] or row2[3]) is (np.nan)  :
             pass
         else:
             gift_data.append(row2)
@@ -64,26 +67,49 @@ def randomize():
     # Generate the result as a CSV file
     csv_output = StringIO()
     csv_writer = csv.writer(csv_output)
-    csv_writer.writerow(['Sequence','EmployeeID', 'Name', 'Gender','Gift'])
+    csv_writer.writerow(['序號','員工序號','員工姓名', '公司別', '抽中獎項'])
     for i, emp_data in enumerate(lucky_draw_result,start=1):
         #for member in number_of_times:
         #print(i,emp_data)
-        csv_writer.writerow([i, emp_data[0],emp_data[1],emp_data[2],emp_data[4]])
+        csv_writer.writerow([i, emp_data[0],emp_data[1],emp_data[2],emp_data[5]])
+
+    csv_output = csv_output.getvalue().encode('big5','replace')
+    csv_output = codecs.BOM_UTF8 + csv_output  # Add BOM
 
     # Save the CSV to a temporary file
     with tempfile.NamedTemporaryFile(delete=False, suffix='.csv') as csv_temp_file:
         csv_temp_file_path = csv_temp_file.name
+        #csv_temp_file_path="draw_result.csv"
         #csv_temp_file.write(csv_output.getvalue().encode('utf-8'))
-        csv_temp_file.write(csv_output.getvalue().encode('big5'))
+        csv_temp_file.write(csv_output)
+        #csv_temp_file.write(csv_output.getvalue().encode('big5','ignore')
 
        
 
     return render_template('result.html', teams=lucky_draw_result, csv_file_path=csv_temp_file_path, pdf_file_path=None)
 
-@app.route('/download_csv')
-def download_csv():
-    csv_file_path = request.args.get('csv_file_path')
-    return send_file(csv_file_path, as_attachment=True)
+@app.route('/download_csv/<csv_file_path>', methods=['GET', 'POST'])
+def download_csv(csv_file_path):
+    base_dir = os.getcwd()
+    directory = "/home/jerryw/developer/luckydraw"  # replace with your actual directory path
+    filename_for_user = datetime.now().strftime("draw_%Y%m%d_%H%M%S.csv")
+    csv_file_path = request.args.get('csv_file_path', "")
+    csv_file_path = os.path.abspath(csv_file_path)
+
+    if not os.path.commonpath([base_dir, csv_file_path]).startswith(base_dir):
+        return "Access denied: You can only download files within the allowed directory."
+
+    if os.path.exists(csv_file_path):
+        # get the directory and base file name
+        directory, file_name = os.path.split(csv_file_path)
+
+        # send file as an attachment without reading its contents
+        response = make_response(
+            send_from_directory(directory, path=csv_file_path, as_attachment=True, mimetype='text/csv;charset=big5'))
+        response.headers["Content-Disposition"] = f"attachment; filename={filename_for_user}"
+        return response
+    else:
+        return "File does not exist."
 
 # @app.route('/download_pdf')
 # def download_pdf():
@@ -91,4 +117,4 @@ def download_csv():
 #     return send_file(pdf_file_path, as_attachment=True)
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=5000)
+    app.run(debug=True, host='0.0.0.0', port=8000)
