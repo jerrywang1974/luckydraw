@@ -16,6 +16,18 @@ app = Flask(__name__, static_url_path='/static')
 def index():
     return render_template('index.html')
 
+@app.route('/download/sample-employee.xls')
+def download1():
+    path = 'sample-employee.xls'
+    return send_file(path, as_attachment=True)
+
+@app.route('/download/sample-giftlist.xls')
+def download2():
+    path = 'sample-giftlist.xls'
+    return send_file(path, as_attachment=True)
+
+def isNotNaN(num):
+        return num == num
 @app.route('/randomize', methods=['POST'])
 def randomize():
     #Employee List
@@ -32,19 +44,28 @@ def randomize():
     reader_gift = pd.read_excel(xls_file2)
     
     for row1 in reader_employee.values.tolist():
-        if ((row1[3] is not (np.nan)) and (row1[4] is not (np.nan) ) or row1[3]==" " or row1[3]=="　"):
+        if (row1[3]==" " or row1[3]=="　" ):
+            print(row1[1]," ",row1[2] , "已抽過")
+            pass
+        if (isNotNaN(row1[3]) or isNotNaN(row1[4])):
+            print(row1[1]," ",row1[2] , "已抽過")
             pass
         else:
+            #print(row1[1]," ",row1[2],"未抽過")
             employee_data.append(row1)
     for row2 in reader_gift.values.tolist():
-        if (row2[2] or row2[3]) is (np.nan)  :
+        if (isNotNaN(row2[2]) or isNotNaN(row2[3]))  :
+            print(row2[1]," ",row2[2] , "已抽過")
             pass
         else:
+            print(row2[1]," ",row2[2] , "未抽過")
             gift_data.append(row2)
+
 
     #print(data) # 參加抽獎人員
     #wait = input("Press Enter to continue.")
     # Randomly shuffle the data
+    print("Number of Employee:",len(employee_data))
     random.shuffle(employee_data)
     random.shuffle(gift_data)
     lucky_draw_result=[]
@@ -117,4 +138,4 @@ def download_csv(csv_file_path):
 #     return send_file(pdf_file_path, as_attachment=True)
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0', port=8000)
+    app.run(debug=True, host='0.0.0.0',port=443,ssl_context=('/etc/letsencrypt/live/monitor.jerryw.org/fullchain.pem', '/etc/letsencrypt/live/monitor.jerryw.org/privkey.pem'))
