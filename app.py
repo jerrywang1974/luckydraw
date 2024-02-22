@@ -7,10 +7,19 @@ from datetime import datetime
 from flask import Flask, render_template, request, make_response, send_file, Response,send_from_directory
 from fpdf import FPDF
 from io import StringIO, BytesIO
+from flask_sslify import SSLify
 import numpy as np
 import pandas as pd
 
 app = Flask(__name__, static_url_path='/static')
+sslify = SSLify(app)
+
+@app.before_request
+def before_request():
+    if not request.is_secure:
+        url = request.url.replace('http://', 'https://', 1)
+        code = 301
+        return redirect(url, code=code)
 
 @app.route('/')
 def index():
@@ -51,7 +60,7 @@ def randomize():
             print(row1[1]," ",row1[2] , "已抽過")
             pass
         else:
-            #print(row1[1]," ",row1[2],"未抽過")
+            print(row1[1]," ",row1[2],"未抽過")
             employee_data.append(row1)
     for row2 in reader_gift.values.tolist():
         if (isNotNaN(row2[2]) or isNotNaN(row2[3]))  :
@@ -138,4 +147,5 @@ def download_csv(csv_file_path):
 #     return send_file(pdf_file_path, as_attachment=True)
 
 if __name__ == '__main__':
-    app.run(debug=True, host='0.0.0.0',port=443,ssl_context=('/etc/letsencrypt/live/monitor.jerryw.org/fullchain.pem', '/etc/letsencrypt/live/monitor.jerryw.org/privkey.pem'))
+    #app.run(debug=True, host='0.0.0.0',port=443,ssl_context=('/etc/letsencrypt/live/monitor.jerryw.org/fullchain.pem', '/etc/letsencrypt/live/monitor.jerryw.org/privkey.pem'))
+    app.run(debug=True, host='::',port=443,ssl_context=('/etc/letsencrypt/live/monitor.jerryw.org/fullchain.pem', '/etc/letsencrypt/live/monitor.jerryw.org/privkey.pem'))
